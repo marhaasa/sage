@@ -1,0 +1,18 @@
+[tool.poetry]
+name = "sage"
+version = "0.1.0"
+description = "Intelligent semantic tagging for markdown files using Claude"
+authors = ["Marius Høgli Aasarød <marius@aasarod.no>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.8"
+aiofiles = "^23.0.0"
+click = "^8.0.0"
+
+[tool.poetry.scripts]
+sage = "sage.cli:main"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

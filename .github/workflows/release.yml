@@ -1,0 +1,161 @@
+name: Release and Update Homebrew
+
+on:
+  push:
+    tags:
+      - 'v*.*.*'  # Triggers on version tags like v0.1.0
+
+permissions:
+  contents: write  # Need write permission to create releases
+  
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write  # Need write permission to create releases
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      
+      - name: Install Poetry
+        run: |
+          curl -sSL https://install.python-poetry.org | python3 -
+          echo "$HOME/.local/bin" >> $GITHUB_PATH
+      
+      - name: Extract version
+        id: extract_version
+        run: |
+          VERSION=${GITHUB_REF#refs/tags/v}
+          echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
+      
+      - name: Build package
+        run: |
+          poetry build
+      
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v1
+        with:
+          name: Release ${{ steps.extract_version.outputs.VERSION }}
+          body: |
+            ## Installation
+            
+            ```bash
+            brew tap marhaasa/tools
+            brew install sage
+            ```
+            
+            ## What's Changed
+            See the [commit history](https://github.com/${{ github.repository }}/commits/v${{ steps.extract_version.outputs.VERSION }}) for changes.
+          files: |
+            dist/*.whl
+            dist/*.tar.gz
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      
+      - name: Calculate wheel SHA256
+        id: calculate_sha
+        run: |
+          VERSION=${{ steps.extract_version.outputs.VERSION }}
+          # Use the wheel file instead of source distribution
+          WHEEL_FILE="dist/sage-${VERSION}-py3-none-any.whl"
+          
+          if [ ! -f "$WHEEL_FILE" ]; then
+            echo "Error: Wheel file $WHEEL_FILE not found"
+            exit 1
+          fi
+          
+          SHA256=$(sha256sum "$WHEEL_FILE" | cut -d' ' -f1)
+          echo "SHA256=$SHA256" >> $GITHUB_OUTPUT
+          echo "Calculated wheel SHA256: $SHA256"
+
+  update-homebrew:
+    needs: release
+    runs-on: ubuntu-latest
+    steps:
+      - name: Extract version
+        id: extract_version
+        run: |
+          VERSION=${GITHUB_REF#refs/tags/v}
+          echo "VERSION=$VERSION" >> $GITHUB_OUTPUT
+      
+      - name: Calculate source SHA256
+        id: calculate_sha
+        run: |
+          VERSION=${{ steps.extract_version.outputs.VERSION }}
+          TARBALL_URL="https://github.com/${{ github.repository }}/archive/refs/tags/v${VERSION}.tar.gz"
+          
+          # Download and calculate SHA256
+          curl -L -o source.tar.gz "$TARBALL_URL"
+          SHA256=$(sha256sum source.tar.gz | cut -d' ' -f1)
+          echo "SHA256=$SHA256" >> $GITHUB_OUTPUT
+      
+      - name: Checkout homebrew tap
+        uses: actions/checkout@v4
+        with:
+          repository: marhaasa/homebrew-tools
+          token: ${{ secrets.TAP_GITHUB_TOKEN }}
+      
+      - name: Update Formula
+        run: |
+          VERSION=${{ steps.extract_version.outputs.VERSION }}
+          SHA256=${{ steps.calculate_sha.outputs.SHA256 }}
+          
+          # Create the updated formula
+          cat > Formula/sage.rb << 'EOF'
+          class Sage < Formula
+            include Language::Python::Virtualenv
+
+            desc "Intelligent semantic tagging for markdown files using Claude"
+            homepage "https://github.com/marhaasa/sage"
+            url "https://github.com/marhaasa/sage/archive/refs/tags/v__VERSION__.tar.gz"
+            sha256 "__SHA256__"
+            license "MIT"
+
+            depends_on "python@3.12"
+
+            resource "aiofiles" do
+              url "https://files.pythonhosted.org/packages/source/a/aiofiles/aiofiles-24.1.0.tar.gz"
+              sha256 "22a075c9dd35a059d8e701c4dbc7a73b99c9e9b7b3962d5afed35c5b31a7b2a8"
+            end
+
+            resource "click" do
+              url "https://files.pythonhosted.org/packages/source/c/click/click-8.1.7.tar.gz"
+              sha256 "ca9853ad459e787e2192211578cc907e7594e294c7ccc834310722b41b9ca6de"
+            end
+
+            def install
+              virtualenv_install_with_resources
+            end
+
+            test do
+              # Test version command
+              assert_match "sage #{version}", shell_output("#{bin}/sage --version")
+              
+              # Test help command
+              assert_match "Intelligent semantic tagging", shell_output("#{bin}/sage --help")
+              
+              # Test that commands are available
+              assert_match "file", shell_output("#{bin}/sage --help")
+              assert_match "dir", shell_output("#{bin}/sage --help")
+              assert_match "files", shell_output("#{bin}/sage --help")
+            end
+          end
+          EOF
+          
+          # Replace placeholders with actual values
+          sed -i "s/__VERSION__/$VERSION/g" Formula/sage.rb
+          sed -i "s/__SHA256__/$SHA256/g" Formula/sage.rb
+          
+          # Show the changes for debugging
+          echo "Updated formula with version $VERSION and SHA256 $SHA256"
+          
+          # Commit and push
+          git config user.name "GitHub Actions"
+          git config user.email "actions@github.com"
+          git add Formula/sage.rb
+          git commit -m "Update sage to v$VERSION" || echo "No changes to commit"
+          git push
