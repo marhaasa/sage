@@ -8,7 +8,7 @@ Sage analyzes your markdown content and automatically adds relevant semantic tag
 
 Before installing sage, you'll need:
 
-- **Python 3.8+**
+- **Python 3.9+**
 - **[Claude Code CLI](https://claude.ai/code)** - Get access at [claude.ai/code](https://claude.ai/code)
 
 ### Setting up Claude Code CLI
@@ -24,12 +24,6 @@ Before installing sage, you'll need:
 ```bash
 brew tap marhaasa/tools
 brew install marhaasa/tools/sage
-```
-
-### Via pip
-
-```bash
-pip install sage
 ```
 
 ### Development Installation
@@ -119,7 +113,7 @@ Content goes here...
 
 ## Requirements
 
-- Python 3.8+
+- Python 3.9+
 - Claude Code CLI (claude.ai/code)
 
 ## Troubleshooting
