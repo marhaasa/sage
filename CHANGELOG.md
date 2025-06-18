@@ -9,6 +9,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+## [0.1.6] - 2025-06-18
+
+### Fixed
+- Removed incorrect pip installation from README
+- Updated python version requirement
+
+
 ## [0.1.5] - 2025-06-18
 
 ### Fixed
