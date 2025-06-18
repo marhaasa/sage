@@ -23,7 +23,7 @@ Before installing sage, you'll need:
 
 ```bash
 brew tap marhaasa/tools
-brew install sage
+brew install marhaasa/tools/sage
 ```
 
 ### Via pip
