@@ -9,6 +9,12 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+## [0.1.3] - 2025-06-18
+
+### Fixed
+- Removed Write from allowedTools for added file integrity security
+
+
 ## [0.1.2] - 2025-06-18
 
 ### Fixed
