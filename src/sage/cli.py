@@ -5,13 +5,13 @@ import json
 import sys
 import time
 from pathlib import Path
-from typing import List, Optional
+from typing import List
 
 import click
 
 from . import __version__
 from .tagger import AsyncMarkdownTagger
-from .utils import format_file_size, truncate_text
+from .utils import truncate_text
 
 
 def print_success(message: str) -> None:
