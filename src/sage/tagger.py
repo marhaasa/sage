@@ -157,7 +157,7 @@ Open the conversation file and at the end of the file add these tags. Each tag s
 
     async def process_files(
         self, file_paths: List[Union[str, Path]], force: bool = False
-    ) -> Tuple[int, int, List[Tuple[Path, str]]]:
+    ) -> Tuple[int, int, List[Tuple[Union[str, Path], str]]]:
         """Process multiple files concurrently.
 
         Args:
@@ -185,19 +185,22 @@ Open the conversation file and at the end of the file add these tags. Each tag s
             if isinstance(result, Exception):
                 error_count += 1
                 errors.append((file_path, str(result)))
-            else:
+            elif isinstance(result, tuple) and len(result) == 3:
                 success, error_msg, tags = result
                 if success:
                     success_count += 1
                 else:
                     error_count += 1
                     errors.append((file_path, error_msg or "Unknown error"))
+            else:
+                error_count += 1
+                errors.append((file_path, "Unexpected result format"))
 
         return success_count, error_count, errors
 
     async def process_directory(
         self, directory: Union[str, Path], force: bool = False, recursive: bool = False
-    ) -> Tuple[int, int, List[Tuple[Path, str]]]:
+    ) -> Tuple[int, int, List[Tuple[Union[str, Path], str]]]:
         """Process all markdown files in a directory.
 
         Args:
@@ -223,4 +226,6 @@ Open the conversation file and at the end of the file add these tags. Each tag s
         if not markdown_files:
             return 0, 0, []
 
-        return await self.process_files(markdown_files, force)
+        # Convert Path objects to Union[str, Path] for type compatibility
+        file_paths: List[Union[str, Path]] = list(markdown_files)
+        return await self.process_files(file_paths, force)
