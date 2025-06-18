@@ -16,10 +16,22 @@ def validate_tags(text: str) -> Tuple[List[str], List[str]]:
     """
     # Only look for tags in the last 20 lines to avoid code blocks
     lines = text.split("\n")
-    last_lines = "\n".join(lines[-20:]) if len(lines) > 20 else text
-
+    last_lines = lines[-20:] if len(lines) > 20 else lines
+    
+    # Remove code blocks from the search area
+    filtered_lines = []
+    in_code_block = False
+    
+    for line in last_lines:
+        if line.strip().startswith("```"):
+            in_code_block = not in_code_block
+            continue
+        if not in_code_block:
+            filtered_lines.append(line)
+    
+    search_text = "\n".join(filtered_lines)
     tag_pattern = r"\[\[([^\]]+)\]\]"
-    tags = re.findall(tag_pattern, last_lines)
+    tags = re.findall(tag_pattern, search_text)
 
     valid_tags = []
     invalid_tags = []
