@@ -1,6 +1,6 @@
 """Sage - Intelligent semantic tagging for markdown files."""
 
-__version__ = "0.1.6"
+__version__ = "0.1.7"
 __author__ = "Marius Høgli Aasarød"
 __email__ = "marius@aasarod.no"
 
