@@ -64,7 +64,11 @@ NEW_VERSION=$(poetry version --short)
 
 # Update version in __init__.py
 print_info "Updating version in src/sage/__init__.py..."
-sed -i "s/__version__ = \".*\"/__version__ = \"$NEW_VERSION\"/" src/sage/__init__.py
+if [[ "$OSTYPE" == "darwin"* ]]; then
+  sed -i "" "s/__version__ = \".*\"/__version__ = \"$NEW_VERSION\"/" src/sage/__init__.py
+else
+  sed -i "s/__version__ = \".*\"/__version__ = \"$NEW_VERSION\"/" src/sage/__init__.py
+fi
 
 # Build the package to ensure it builds correctly
 print_info "Testing build..."
