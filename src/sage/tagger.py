@@ -22,15 +22,19 @@ class AsyncMarkdownTagger:
         self.max_concurrent = max_concurrent
         self.timeout = timeout
 
-        self.claude_prompt = """Analyze this conversation and suggest 2-5 relevant one word tags that describe the topic, technology, or type of discussion. 
+        self.claude_prompt = """Analyze this markdown document and suggest 2-5 relevant one word tags that describe the topic, technology, or type of content.
 
 Requirements:
 - Tags must be single words only (no spaces)
 - Tags must be lowercase
 - Tags should be relevant and descriptive
-- Examples: python, debugging, react, tutorial, planning
+- Use the same language as the document content (if document is in Norwegian, use Norwegian tags; if in English, use English tags; etc.)
+- Examples: 
+  - English: python, debugging, react, tutorial, planning
+  - Norwegian: programmering, feilsøking, veiledning, planlegging
+  - German: programmierung, fehlersuche, anleitung, planung
 
-Open the conversation file and at the end of the file add these tags. Each tag should be on a new line surrounded by [[]] like [[tag]]. Do not remove the existing [[claude]] tag if it exists."""
+Open the markdown file and at the end of the file add these tags. Each tag should be on a new line surrounded by [[]] like [[tag]]. Do not remove the existing [[claude]] tag if it exists."""
 
         self.allowed_tools = "Read,Edit"
 
