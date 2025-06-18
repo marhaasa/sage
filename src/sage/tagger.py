@@ -32,7 +32,7 @@ Requirements:
 
 Open the conversation file and at the end of the file add these tags. Each tag should be on a new line surrounded by [[]] like [[tag]]. Do not remove the existing [[claude]] tag if it exists."""
 
-        self.allowed_tools = "Read,Write,Edit"
+        self.allowed_tools = "Read,Edit"
 
     async def check_already_tagged(self, file_path: Path) -> Tuple[bool, List[str]]:
         """Check if file already has tags (excluding [[claude]]).
