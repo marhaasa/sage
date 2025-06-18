@@ -80,7 +80,7 @@ rm -rf dist/
 # Update CHANGELOG.md (create if it doesn't exist)
 if [ ! -f "CHANGELOG.md" ]; then
   print_info "Creating CHANGELOG.md..."
-  cat > CHANGELOG.md << EOF
+  cat >CHANGELOG.md <<EOF
 # Changelog
 
 All notable changes to this project will be documented in this file.
@@ -112,7 +112,7 @@ done
 if [ -n "$CHANGELOG_ENTRIES" ]; then
   # Get current date
   CURRENT_DATE=$(date +"%Y-%m-%d")
-  
+
   # Capitalize version type
   if [ "$VERSION_TYPE" = "patch" ]; then
     SECTION="### Fixed"
@@ -121,33 +121,33 @@ if [ -n "$CHANGELOG_ENTRIES" ]; then
   elif [ "$VERSION_TYPE" = "major" ]; then
     SECTION="### Changed"
   fi
-  
+
   # Create temporary file with complete new entry
-  cat > /tmp/changelog_entry << EOF
+  cat >/tmp/changelog_entry <<EOF
 
 ## [$NEW_VERSION] - $CURRENT_DATE
 
 $SECTION
 EOF
-  echo -e "$CHANGELOG_ENTRIES" >> /tmp/changelog_entry
-  
+  echo -e "$CHANGELOG_ENTRIES" >>/tmp/changelog_entry
+
   # Find the line number of [Unreleased] and insert after it
   UNRELEASED_LINE=$(grep -n "\[Unreleased\]" CHANGELOG.md | cut -d: -f1)
   if [ -n "$UNRELEASED_LINE" ]; then
     # Insert after the Unreleased section (usually line 7)
     INSERT_LINE=$((UNRELEASED_LINE + 2))
-    head -n $INSERT_LINE CHANGELOG.md > /tmp/changelog_new
-    cat /tmp/changelog_entry >> /tmp/changelog_new
-    tail -n +$((INSERT_LINE + 1)) CHANGELOG.md >> /tmp/changelog_new
+    head -n $INSERT_LINE CHANGELOG.md >/tmp/changelog_new
+    cat /tmp/changelog_entry >>/tmp/changelog_new
+    tail -n +$((INSERT_LINE + 1)) CHANGELOG.md >>/tmp/changelog_new
     mv /tmp/changelog_new CHANGELOG.md
   else
     # Fallback: append to end
-    cat /tmp/changelog_entry >> CHANGELOG.md
+    cat /tmp/changelog_entry >>CHANGELOG.md
   fi
-  
+
   # Clean up temp files
   rm -f /tmp/changelog_entry
-  
+
   print_info "CHANGELOG.md updated"
 else
   print_warning "No changelog entries provided, skipping CHANGELOG update"
@@ -184,4 +184,4 @@ print_info "https://github.com/marhaasa/sage/actions"
 print_info ""
 print_info "Once complete, users can install with:"
 print_info "  brew tap marhaasa/tools"
-print_info "  brew install sage"
+print_info "  brew install marhaasa/tools/sage"
