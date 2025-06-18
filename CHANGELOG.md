@@ -8,6 +8,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased]
 
 ### Added
+
+## [0.1.2] - 2025-06-18
+
+### Fixed
+- Initial functionality
+- Add tags for single or multiple files
+- Add tags for all files in directory
+
 - Initial release of sage
 - Intelligent semantic tagging for markdown files using Claude
 - CLI interface with `file`, `files`, and `dir` commands
