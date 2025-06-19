@@ -1,4 +1,4 @@
-# Sage
+# sage
 
 An intelligent semantic tagging CLI tool for markdown files using the Claude Code SDK.
 
