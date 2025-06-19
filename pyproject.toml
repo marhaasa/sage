@@ -4,11 +4,13 @@ version = "0.1.7"
 description = "Intelligent semantic tagging for markdown files using Claude"
 authors = ["Marius Høgli Aasarød <marius@aasarod.no>"]
 readme = "README.md"
+packages = [{include = "src"}]
 
 [tool.poetry.dependencies]
-python = "^3.9"
+python = "^3.10"
 aiofiles = "^23.0.0"
 click = "^8.0.0"
+claude_code_sdk = "*"
 
 [tool.poetry.group.dev.dependencies]
 ruff = "^0.1.0"
@@ -18,7 +20,7 @@ pytest = "^7.0.0"
 types-aiofiles = "^23.0.0"
 
 [tool.poetry.scripts]
-sage = "sage.cli:main"
+sage = "src.cli:main"
 
 [build-system]
 requires = ["poetry-core"]

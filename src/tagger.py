@@ -6,21 +6,24 @@ from pathlib import Path
 from typing import List, Optional, Tuple, Union
 import aiofiles
 
+from claude_code_sdk import query, ClaudeCodeOptions
 from .utils import validate_tags, verify_content_unchanged
 
 
 class AsyncMarkdownTagger:
-    """Asynchronous markdown tagger using Claude Code CLI."""
+    """Asynchronous markdown tagger using Claude Code SDK."""
 
     def __init__(self, max_concurrent: int = 5, timeout: int = 120):
         """Initialize the tagger.
 
         Args:
             max_concurrent: Maximum number of concurrent processing tasks
-            timeout: Timeout in seconds for Claude API calls
+            timeout: Timeout in seconds for Claude API calls (maintained for API compatibility)
         """
         self.max_concurrent = max_concurrent
-        self.timeout = timeout
+        self.timeout = (
+            timeout  # Kept for compatibility, but SDK handles timeouts internally
+        )
 
         self.claude_prompt = """Analyze this markdown document and suggest 2-5 relevant one word tags that describe the topic, technology, or type of content.
 
@@ -36,7 +39,12 @@ Requirements:
 
 Open the markdown file and at the end of the file add these tags. Each tag should be on a new line surrounded by [[]] like [[tag]]. Do not remove the existing [[claude]] tag if it exists."""
 
-        self.allowed_tools = "Read,Edit"
+        self.claude_options = ClaudeCodeOptions(
+            max_turns=3,
+            system_prompt="You are a helpful assistant that analyzes markdown content and adds semantic tags.",
+            allowed_tools=["Read", "Edit"],
+            permission_mode="acceptEdits",
+        )
 
     async def check_already_tagged(self, file_path: Path) -> Tuple[bool, List[str]]:
         """Check if file already has tags (excluding [[claude]]).
@@ -81,28 +89,26 @@ Open the markdown file and at the end of the file add these tags. Each tag shoul
             async with aiofiles.open(file_path, "r", encoding="utf-8") as f:
                 original_content = await f.read()
 
-            # Run claude command asynchronously
-            cmd = [
-                "claude",
-                "-p",
-                self.claude_prompt,
-                f"--allowedTools={self.allowed_tools}",
-            ]
-
-            process = await asyncio.create_subprocess_exec(
-                *cmd,
-                stdin=asyncio.subprocess.PIPE,
-                stdout=asyncio.subprocess.PIPE,
-                stderr=asyncio.subprocess.PIPE,
+            # Configure SDK options with current working directory set to file's parent
+            options = ClaudeCodeOptions(
+                max_turns=self.claude_options.max_turns,
+                system_prompt=self.claude_options.system_prompt,
+                cwd=file_path.parent,
+                allowed_tools=self.claude_options.allowed_tools,
+                permission_mode=self.claude_options.permission_mode,
             )
 
-            stdout, stderr = await asyncio.wait_for(
-                process.communicate(input=original_content.encode()),
-                timeout=self.timeout,
-            )
+            # Use Claude Code SDK to process the file
+            prompt = f"{self.claude_prompt}\n\nProcess the file: {file_path.name}"
 
-            if process.returncode != 0:
-                return False, f"Claude error: {stderr.decode()}", []
+            # Collect all messages from the SDK
+            messages = []
+            async for message in query(prompt=prompt, options=options):
+                messages.append(message)
+
+            # Check if processing was successful (SDK doesn't return error codes like subprocess)
+            if not messages:
+                return False, "No response from Claude SDK", []
 
             # Read updated content and verify integrity
             async with aiofiles.open(file_path, "r", encoding="utf-8") as f:
@@ -125,18 +131,12 @@ Open the markdown file and at the end of the file add these tags. Each tag shoul
 
             return True, None, valid_tags
 
-        except asyncio.TimeoutError:
-            if retry_count < 2:  # Retry up to 2 times
+        except Exception as e:
+            if retry_count < 2:  # Retry up to 2 times for any errors
                 await asyncio.sleep(2)  # Wait before retry
                 return await self.process_file(file_path, force, retry_count + 1)
             else:
-                return False, f"Timeout after {retry_count + 1} attempts", []
-        except Exception as e:
-            if retry_count < 1:  # Retry once for other errors
-                await asyncio.sleep(1)
-                return await self.process_file(file_path, force, retry_count + 1)
-            else:
-                return False, f"Error after retry: {e}", []
+                return False, f"Error after {retry_count + 1} attempts: {e}", []
 
     async def _cleanup_invalid_tags(
         self, file_path: Path, valid_tags: List[str]

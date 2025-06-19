@@ -1,7 +1,7 @@
 """Tests for utility functions."""
 
 import pytest
-from sage.utils import validate_tags, verify_content_unchanged, format_file_size, truncate_text
+from src.utils import validate_tags, verify_content_unchanged, format_file_size, truncate_text
 
 
 class TestValidateTags:

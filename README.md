@@ -1,6 +1,6 @@
 # Sage
 
-An intelligent semantic tagging CLI tool for markdown files using Claude.
+An intelligent semantic tagging CLI tool for markdown files using the Claude Code SDK.
 
 Sage analyzes your markdown content and automatically adds relevant semantic tags, making your notes more discoverable and organized.
 
@@ -8,14 +8,14 @@ Sage analyzes your markdown content and automatically adds relevant semantic tag
 
 Before installing sage, you'll need:
 
-- **Python 3.9+**
-- **[Claude Code CLI](https://claude.ai/code)** - Get access at [claude.ai/code](https://claude.ai/code)
+- **Python 3.10+**
+- **[Claude Code SDK](https://claude.ai/code)** - Get access at [claude.ai/code](https://claude.ai/code)
 
-### Setting up Claude Code CLI
+### Setting up Claude Code SDK
 
 1. Sign up for Claude Code access at [claude.ai/code](https://claude.ai/code)
-2. Install the Claude Code CLI following the official documentation
-3. Verify installation: `claude --version`
+2. The Claude Code SDK will be automatically installed as a dependency
+3. Ensure you have proper authentication set up for Claude Code
 
 ## Installation
 
@@ -40,7 +40,6 @@ pip install -e ".[dev]"
 2. **Test your setup:**
    ```bash
    sage --version
-   claude --version
    ```
 3. **Tag your first file:**
    ```bash
@@ -89,7 +88,7 @@ sage file notes.md --json
 
 ## Features
 
-- **Intelligent Analysis**: Uses Claude to understand content and suggest relevant tags
+- **Intelligent Analysis**: Uses Claude Code SDK to understand content and suggest relevant tags
 - **Safe Processing**: Verifies content integrity and provides automatic rollback
 - **Concurrent Processing**: Fast batch processing with configurable concurrency
 - **Format Validation**: Ensures tags follow proper format (lowercase, single words)
@@ -113,22 +112,17 @@ Content goes here...
 
 ## Requirements
 
-- Python 3.9+
-- Claude Code CLI (claude.ai/code)
+- Python 3.10+
+- Claude Code SDK (automatically installed as dependency)
 
 ## Troubleshooting
 
 ### Common Issues
 
-**"claude: command not found"**
-- Ensure Claude Code CLI is installed and in your PATH
-- Try running `claude --version` to verify installation
-- Check the [Claude Code documentation](https://claude.ai/code) for setup help
-
 **"No tags added" or empty results**
 - Verify your markdown file has substantive content (not just headers)
-- Check that Claude Code CLI is properly authenticated
-- Try running `claude "Hello"` to test your Claude Code setup
+- Check that Claude Code SDK is properly authenticated
+- Ensure you have proper access to Claude Code services
 
 **Timeout errors**
 - Increase timeout with `--timeout 300` (5 minutes)
@@ -143,7 +137,7 @@ Content goes here...
 
 - Check the [issues page](https://github.com/marhaasa/sage/issues) for known problems
 - Create a new issue with your error message and system info
-- Include the output of `sage --version` and `claude --version`
+- Include the output of `sage --version` and your Python version
 
 ## Integration
 
