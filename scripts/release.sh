@@ -63,11 +63,11 @@ poetry version $VERSION_TYPE
 NEW_VERSION=$(poetry version --short)
 
 # Update version in __init__.py
-print_info "Updating version in src/sage/__init__.py..."
+print_info "Updating version in src/__init__.py..."
 if [[ "$OSTYPE" == "darwin"* ]]; then
-  sed -i "" "s/__version__ = \".*\"/__version__ = \"$NEW_VERSION\"/" src/sage/__init__.py
+  sed -i "" "s/__version__ = \".*\"/__version__ = \"$NEW_VERSION\"/" src/__init__.py
 else
-  sed -i "s/__version__ = \".*\"/__version__ = \"$NEW_VERSION\"/" src/sage/__init__.py
+  sed -i "s/__version__ = \".*\"/__version__ = \"$NEW_VERSION\"/" src/__init__.py
 fi
 
 # Build the package to ensure it builds correctly
@@ -156,9 +156,9 @@ fi
 # Commit version changes
 print_info "Committing version changes..."
 if [ -n "$CHANGELOG_ENTRIES" ]; then
-  git add pyproject.toml src/sage/__init__.py CHANGELOG.md
+  git add pyproject.toml src/__init__.py CHANGELOG.md
 else
-  git add pyproject.toml src/sage/__init__.py
+  git add pyproject.toml src/__init__.py
 fi
 git commit -m "Bump version to $NEW_VERSION"
 
