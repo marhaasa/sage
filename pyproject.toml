@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "sage"
-version = "0.1.7"
+version = "0.2.0"
 description = "Intelligent semantic tagging for markdown files using Claude"
 authors = ["Marius Høgli Aasarød <marius@aasarod.no>"]
 readme = "README.md"

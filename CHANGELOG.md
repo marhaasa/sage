@@ -9,6 +9,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Added
 
+## [0.2.0] - 2025-06-19
+
+### Added
+- Moved from Claude Code CLI to Claude Code SDK
+- Simplified project folder structure
+
+
 ## [0.1.7] - 2025-06-18
 
 ### Fixed
