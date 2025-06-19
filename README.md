@@ -17,6 +17,29 @@ Before installing sage, you'll need:
 2. The Claude Code SDK will be automatically installed as a dependency
 3. Ensure you have proper authentication set up for Claude Code
 
+## Privacy & Data Considerations
+
+**⚠️ Important Privacy Notice**
+
+Sage sends your markdown file content to Claude (Anthropic's AI service) for analysis and tag generation. This means:
+
+- **Your content leaves your local machine** and is processed by Claude's AI service
+- **Consider the sensitivity of your content** before processing files with Sage
+- **Rule of thumb**: Don't use Sage on any markdown files you wouldn't want your mom to see
+- **Review your content** before running Sage on files containing personal, confidential, or sensitive information
+
+**What Sage does:**
+- Sends file content to Claude for semantic analysis
+- Receives suggested tags back from the service
+- Does not permanently store your content (processing is transient)
+
+**What you should do:**
+- Be mindful of what content you're processing
+- Avoid using Sage on files with personal information, passwords, API keys, or confidential data
+- Consider your organization's data handling policies before use
+
+By using Sage, you acknowledge that your markdown content will be sent to and processed by Claude's AI service.
+
 ## Installation
 
 ### Via Homebrew (Recommended)
