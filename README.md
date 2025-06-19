@@ -2,7 +2,7 @@
 
 An intelligent semantic tagging CLI tool for markdown files using the Claude Code SDK.
 
-Sage analyzes your markdown content and automatically adds relevant semantic tags, making your notes more discoverable and organized.
+sage analyzes your markdown content and automatically adds relevant semantic tags, making your notes more discoverable and organized.
 
 ## Prerequisites
 
@@ -21,24 +21,24 @@ Before installing sage, you'll need:
 
 **⚠️ Important Privacy Notice**
 
-Sage sends your markdown file content to Claude (Anthropic's AI service) for analysis and tag generation. This means:
+sage sends your markdown file content to Claude (Anthropic's AI service) for analysis and tag generation. This means:
 
 - **Your content leaves your local machine** and is processed by Claude's AI service
-- **Consider the sensitivity of your content** before processing files with Sage
-- **Rule of thumb**: Don't use Sage on any markdown files you wouldn't want your mom to see
-- **Review your content** before running Sage on files containing personal, confidential, or sensitive information
+- **Consider the sensitivity of your content** before processing files with sage
+- **Rule of thumb**: Don't use sage on any markdown files you wouldn't want your mom to see
+- **Review your content** before running sage on files containing personal, confidential, or sensitive information
 
-**What Sage does:**
+**What sage does:**
 - Sends file content to Claude for semantic analysis
 - Receives suggested tags back from the service
 - Does not permanently store your content (processing is transient)
 
 **What you should do:**
 - Be mindful of what content you're processing
-- Avoid using Sage on files with personal information, passwords, API keys, or confidential data
+- Avoid using sage on files with personal information, passwords, API keys, or confidential data
 - Consider your organization's data handling policies before use
 
-By using Sage, you acknowledge that your markdown content will be sent to and processed by Claude's AI service.
+By using sage, you acknowledge that your markdown content will be sent to and processed by Claude's AI service.
 
 ## Installation
 
@@ -120,7 +120,7 @@ sage file notes.md --json
 
 ## Tag Format
 
-Sage adds tags at the end of your markdown files:
+sage adds tags at the end of your markdown files:
 
 ```markdown
 # My Great Article
